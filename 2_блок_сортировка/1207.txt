@@ -1,0 +1,74 @@
+1207
+Медиана на плоскости
+Сначало я нахожу самую правую точку, если их несколько, то выбираю любую, запоминаю индекс данной точки. Далее для каждой оставшейся точки
+я нахожу коэффициенты наклона относительно оси ОХ прямых,которые будут проходить обязательно через самую правую
+точку и через выюранную точку. Для каждого коээфициента я запоминаю индекс точки, через которую я проводил прямую с данным коэффициентом.
+Сортирую данные коэффициенты по возростанию коэффицентов, тот коэффициент, который будет посередине массива,
+будет коэффициентом медианы. Выписываю индекс самой правой точки и индекс точки,через которую я проводил прямую со средним коэффициентом.
+
+
+// Example program 
+#include <iostream> 
+#include <string> 
+#include <climits>
+#include <algorithm>
+using namespace std; 
+
+int main() 
+{ 
+int numOfPoints; 
+cin >> numOfPoints; 
+int x[numOfPoints]; 
+int y[numOfPoints]; 
+for (int i = 0; i < numOfPoints; i++) { 
+	cin >> x[i]; 
+	cin >> y[i]; 
+	} 
+int indexOfMin=0; 
+int minX=x[0]; 
+int minY=y[0]; 
+for (int i = 0; i < numOfPoints; i++) { 
+	if (x[i]<minX){ 
+		minX=x[i]; 
+		minY=y[i]; 
+		indexOfMin=i; 
+		} 
+	} 
+double coeff[numOfPoints-1];
+double coeffToFind[numOfPoints-1];
+int flag=0;
+int i = 0;
+while(flag != numOfPoints-1 ){ 
+	if (i==indexOfMin){ 
+		i++; 
+	} 
+	if(minX == x[i] && y[i]-minY > 0){ 
+		coeff[flag]=INT_MAX; 
+	} 
+	else if(minX == x[i] && y[i]-minY < 0){ 
+		coeff[flag]=INT_MIN; 
+	} 
+	else { 
+		coeff[flag]=(y[i]-minY)/(double)(x[i]-minX); 
+		}
+	coeffToFind[flag]=coeff[flag];
+	i++;
+	flag++;
+	}
+	sort(coeff, coeff + numOfPoints -1);
+	double midCoeff=coeff[(numOfPoints-1)/2];
+	int secondPoint=0;
+	for (int i=0; i<numOfPoints-1; i++) {
+	    if (coeffToFind[i] == midCoeff){
+	        secondPoint=i;
+	    }
+	}
+	if (secondPoint>=indexOfMin){
+	    secondPoint=secondPoint+2;
+	}
+	else secondPoint++;
+    cout << indexOfMin+ 1  << " " << secondPoint << endl;
+}
+
+
+

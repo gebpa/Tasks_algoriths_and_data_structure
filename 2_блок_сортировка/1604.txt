@@ -1,0 +1,60 @@
+1604
+Я создаю структуру, содержащую индекс типа знака и кол-во знаков данного типаю
+Элементы структуры хранятся в массиве, массив сортируется по кол-ву знаков.
+Далее пока кол-во знаков максималного элемента больше нуля, я вывожу максимальный элемент и элемент, стоящий перед максимальным, 
+если кол-во знаков больше нуля. После каждой итерации я поддерживаю массив отсортированным.
+
+#include <iostream> 
+#include <algorithm>
+using namespace std; 
+
+struct sign
+{
+	int index;
+	int number;
+};
+
+bool signCompare(sign s1, sign s2) { return s1.number < s2.number; }
+
+int main() 
+{ 
+int n; 
+cin >> n; 
+sign signs[n];
+int numOfSigns=0;
+for (int i = 0; i < n; i++) { 
+	cin >> signs[i].number; 
+	signs[i].index=i+1;
+}
+
+sort(signs, signs + n, signCompare);
+
+int max=n-1;
+int secondMax=n-2;
+while (signs[max].number>0){
+	cout << signs[max].index<<" ";
+	signs[max].number--;
+	if (signs[secondMax].number>0 && secondMax>=0){
+	cout << signs[secondMax].index<<" ";
+	signs[secondMax].number--;
+	}
+	int k=0;
+	int j=1;
+	while (signs[secondMax-k].number<signs[secondMax-j].number && secondMax-j>=0){
+		sign save=signs[secondMax-k];
+		signs[secondMax-k]=signs[secondMax-j];
+		signs[secondMax-j]=save;
+		k++;
+		j++;
+	}
+	int t=0;
+	int p=1;
+	while (signs[max-t].number<signs[max-p].number && max>0){
+		sign save=signs[max-t];
+		signs[max-t]=signs[max-p];
+		signs[max-p]=save;
+		t++;
+		p++;
+	}
+}
+}

@@ -1,0 +1,95 @@
+1080. Раскраска карты
+Используется двумерный массив для хрнения связей. В первой ячейке для каждой точки хранится кол-во связей -1. 
+Так же используется массив для хранения цветов точки, изначально у всех точек цвет 2, то есть он еще не 
+определен. И используется массив для хранения из какой точки мы перешли в i-ую точку, данный массив нужен 
+для возврата в предыдущую точку, если у текущей точки не найденого больше связей. Используется поиск в глубину.
+
+
+#include <iostream>
+#include <cstdio>
+#include <cstring>
+using namespace std;
+int main() {
+    int n=0;
+//    int G[n][n]={{2,  5, 0, 0,0,0},
+//                  {2,  2, 0, 0,0,0},
+//                  {4,  1, 5, 3,0,0},
+//                  {3,  2, 4, 0,0,0},
+//                  {3,  3, 5, 0,0,0},
+//                  {4,  0, 2, 4,0,0},
+//                  };
+    scanf("%d", &n);
+    if (n==0){
+        int t=-1;
+        printf("%d\n", t);
+        return 0;
+    }
+    int G[n][n];
+    int colour[n];
+    int parents[n];
+    int val;
+    for(int i=0;i<n;i++){
+        G[i][0]=1;
+        colour[i]=2;
+    }
+    for(int i=0;i<n;i++){
+        scanf("%d", &val);
+        while (val != 0){
+            --val;
+            G[i][G[i][0]]=val;
+            G[i][0]++;
+            G[val][G[val][0]]=i;
+            G[val][0]++;
+            scanf("%d", &val);
+        }
+    }
+//    for (int i=0;i<n;i++){
+//        for (int t=0;t<n;t++){
+//            printf("%d ",G[i][t]);
+//        }
+//        cout<<endl;
+//    }
+
+    colour[0]=0;
+    int numOfColoured=1;
+    int currentPoint=0;
+    bool isItFail=false;
+    while (numOfColoured != n){
+        int last=0;
+        for (int i=1; i<G[currentPoint][0];i++){
+            int iPoint=G[currentPoint][i];
+            if (colour[iPoint] == colour[currentPoint]){
+                isItFail=true;
+                break;
+            }
+            if (colour[iPoint] ==2){
+                colour[iPoint]=(colour[currentPoint]-1)*(-1);
+                parents[iPoint]=currentPoint;
+                currentPoint=G[currentPoint][i];
+                numOfColoured++;
+                break;
+            }
+            last++;
+        }
+        if (isItFail) {
+            break;
+        }
+        if (last==(G[currentPoint][0]-1))
+            currentPoint=parents[currentPoint];
+    }
+    for (int i=1;i<G[currentPoint][0];i++){
+        if (colour[G[currentPoint][i]] == colour[currentPoint]){
+            isItFail=true;
+            break;
+        }
+    }
+    if (!isItFail){
+        for (int i=0;i<n;i++){
+            printf("%d",colour[i]);
+        }
+    }
+    else{
+        int t=-1;
+        printf("%d\n", t);
+    }
+}

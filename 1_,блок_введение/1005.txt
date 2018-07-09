@@ -1,0 +1,48 @@
+1005
+Чтобы найти, как нужно распределить камни в две кучи так, чтобы разность в весе между кучами была минимальна,
+нужно найти все возможные варианты распределений камней по двум кучам. Если количество камней n и количество
+состояний для каждого камня равно 2, то количество вариантов 2^n. Зная n, можно найти 2^n, сместив 1 на n позиций влево в
+двоичном представление числа. Каждый вариант можно представить, как число, представленное в двоичной чистеме исчесления,
+где 1 в k-ом бите, значит, что k-ый камень находится в первой куче, а 0 в k-ом бите,
+что k-ый камень во второй куче. например 1000101 значит, что 1, 3 и 7 камень в первой куче, а 2, 4, 5, 6 во второй куче. 
+После каждого распределения камней, мы находим разность в весе между кучами и проверяем меньши ли она, чем ранее найденная
+минимальная разность.
+
+#include <iostream>
+#include <string>
+using namespace std;
+
+int main() {
+  int numOfStones;
+  cin >> numOfStones;
+  int stones[numOfStones];
+  int difference = 1;
+  for (int i = 0; i < numOfStones; i++) {
+    cin >> stones[i];
+    difference += stones[i];
+  }
+  int numOfWays = 1 << numOfStones;
+  for (int i = 0; i < numOfWays; i++) {
+    int sum1 = 0;
+    int sum2 = 0;
+    int flag = i;
+    for (int t = 0; t < numOfStones; t++) {
+      if ((flag & 0x1) == 1)
+        sum1 += stones[t];
+      else
+        sum2 += stones[t];
+      flag = flag >> 1;
+    }
+    if (sum1 > sum2 && difference > (sum1 - sum2))
+      difference = sum1 - sum2;
+    if (sum2 > sum1 && difference > (sum2 - sum1))
+      difference = sum2 - sum1;
+    if (sum1 == sum2) {
+      difference = 0;
+      break;
+    }
+  }
+  cout << difference << endl;
+  return 0;
+}
+

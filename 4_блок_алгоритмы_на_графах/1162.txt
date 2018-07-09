@@ -1,0 +1,61 @@
+1162. Currency Exchange
+
+Используется алгоритм Беллмана - Форда. Находим сколько можно полуить денег кадой валюты из того что есть у Ника вначале.
+Далле проверяем каждый обменый пункт, можем ли мы полкчить деньги в валюте Б больше, чем максимальное кол-во в валюте Б, мы нашли на 
+предыдущем шаг, если да, то выводим да.
+
+#include <iostream>
+#include <vector>
+#include <limits>
+using namespace std;
+
+struct exchangePoint {
+    int curA, curB;
+    double rate, commission;
+};
+
+int main() {
+    int numOfCurrencies, numOfExchangePoints, nicksCur;
+    double nickQuantity;
+    scanf("%d %d %d", &numOfCurrencies, &numOfExchangePoints, &nicksCur);
+    scanf("%lf", &nickQuantity);
+    double valueInCurrency[numOfCurrencies];
+    for(int i=0;i<numOfCurrencies;i++){
+        valueInCurrency[i]= std::numeric_limits<double>::min();
+    }
+    valueInCurrency[nicksCur] = nickQuantity;
+    vector<exchangePoint> exchangePoints;
+    for (int i = 0; i < numOfExchangePoints; i++) {
+        exchangePoint exchangePointAB;
+        exchangePoint exchangePointBA;
+        int curA, curB;
+        double rateAtoB, rateBtoA, commissionAtoB, commissionBtoA;
+        scanf("%d %d %lf %lf %lf %lf", &curA, &curB, &rateAtoB, &commissionAtoB, &rateBtoA, &commissionBtoA);
+        exchangePointAB.curA = exchangePointBA.curB = curA;
+        exchangePointAB.curB = exchangePointBA.curA = curB;
+        exchangePointAB.rate = rateAtoB;
+        exchangePointBA.rate = rateBtoA;
+        exchangePointAB.commission = commissionAtoB;
+        exchangePointBA.commission = commissionBtoA;
+        exchangePoints.push_back(exchangePointAB);
+        exchangePoints.push_back(exchangePointBA);
+    }
+    for (int i = 0; i < numOfCurrencies - 1; i++) {
+        for (int j = 0; j < 2*numOfExchangePoints; j++) {
+            double newValueOfB =
+                    (valueInCurrency[exchangePoints[j].curA] - exchangePoints[j].commission) * exchangePoints[j].rate;
+            if ((valueInCurrency[exchangePoints[j].curB]) < newValueOfB)
+                valueInCurrency[exchangePoints[j].curB] = newValueOfB;
+        }
+    }
+    bool isThereAnyProfit = false;
+    for (int j = 0; j < 2*numOfExchangePoints; j++) {
+        double whatWeHaveIfTurnItBack =
+                (valueInCurrency[exchangePoints[j].curA] - exchangePoints[j].commission) * exchangePoints[j].rate;
+        if (whatWeHaveIfTurnItBack >((valueInCurrency[exchangePoints[j].curB])+0.000001))
+            isThereAnyProfit = true;
+    }
+    if (isThereAnyProfit) {
+        printf("YES");
+    } else printf("NO");
+}

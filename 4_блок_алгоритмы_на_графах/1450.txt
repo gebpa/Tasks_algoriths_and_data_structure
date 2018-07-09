@@ -1,0 +1,50 @@
+1450 Российские газопроводы
+Для хранения информации о газопроводе используем структуру.
+Все гпзопроводы храним в векторе. Значения максимальной прибыли для каждой станции храним в списке. 
+Прибыль начальной станции равна 0. Для нахождения максимальной прибыли для каждой станции используем 
+алгоритм Беллмана - Форда. 
+
+#include <iostream>
+#include <vector>
+
+using namespace std;
+
+struct line {
+    int from;
+    int to;
+    int profit;
+};
+int main() {
+    int numOfStations, numOfLines;
+    scanf("%d %d", &numOfStations, &numOfLines);
+    vector<line> lines;
+    for (int i = 0; i < numOfLines; i++) {
+        line line1;
+        scanf("%d %d %d", &line1.from, &line1.to, &line1.profit);
+        lines.push_back(line1);
+    }
+    int start, finish;
+    scanf("%d %d", &start, &finish);
+    int maxProfit[numOfStations];
+    for(int i=0;i<numOfStations;i++){
+        maxProfit[i]= INT_MIN;
+    }
+    maxProfit[start-1]=0;
+
+    for (int i = 0; i < numOfStations - 1; i++) {
+        for (int j=0; j<numOfLines;j++) {
+            int newProbableProfit=maxProfit[lines[j].from-1]+lines[j].profit;
+            if(maxProfit[lines[j].to-1]<newProbableProfit){
+                maxProfit[lines[j].to-1]=newProbableProfit;
+            }
+        }
+    }
+
+    if (maxProfit[finish-1] <= 0) {
+        printf("No solution");
+    } else {
+        printf("%d", maxProfit[finish-1]);
+    }
+
+
+}

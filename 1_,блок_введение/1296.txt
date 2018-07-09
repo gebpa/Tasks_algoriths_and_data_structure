@@ -1,0 +1,32 @@
+1296
+Нужно складывать числа, пока сумма не будет отрицательно, если сумма стала отрицательно, можно начинать считать 
+сумму с нуля, так же нужна переменная, в которой мы будем держать максимальную сумму, и после кажой итерации
+сравнивать новую сумму с максимальной и если новая сумма больше максимальной, записывать в переменную максимальной суммы
+новую сумму.
+
+#include <iostream>
+#include <string>
+using namespace std;
+
+int main() {
+  int length;
+  cin >> length;
+  int p[length];
+  int max = 0;
+  int savedMax = 0;
+
+  for (int i = 0; i < length; i++) {
+    cin >> p[i];
+  }
+
+  for (int i = 0; i < length; i++) {
+    if (max + p[i] > 0)
+      max += p[i];
+    else
+      max = 0;
+    if (max > savedMax)
+      savedMax = max;
+  }
+  cout << savedMax << endl;
+  return 0;
+}

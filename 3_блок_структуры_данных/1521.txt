@@ -1,0 +1,70 @@
+1521
+Используется дерево отрезков, где значение родителя равно сумме значений детей. Номер следующего солдата
+среди оставшихся солдат находится, как номер предыдущего выбывшего плюс k минус 1 делить по модулю на кол-во
+оставшихся солдат. Данный номер есть какая это единица из единиц последних листов.  
+
+
+
+#include <cstdio>
+
+void updateTree(int *tree, int i, int count) {
+    i = count / 2 + i;
+    tree[i] = 0;
+    while (i > 0) {
+        if (i % 2 == 1) i = i / 2;
+        else i = i / 2 - 1;
+        tree[i] = tree[i] - 1;
+    }
+}
+
+int findNext(int *tree, int pos, int root, int count) {
+    int c = 0;
+//    printf("pos %d\n", pos);
+//    printf("root %d\n", root);
+    if (root * 2 + 1 < count-1) {
+        c = tree[root * 2 + 1];
+    }
+    else {
+        return root;
+    }
+    if (c >= pos)
+        return findNext(tree, pos, root * 2 + 1, count);
+    else
+        return findNext(tree, pos - c, root * 2 + 2, count);
+}
+
+
+int main() {
+    int numOfSoldiers, shift;
+    scanf("%d %d", &numOfSoldiers, &shift);
+    int numOfNodesInLastRaw = 1;
+    while (numOfNodesInLastRaw < numOfSoldiers) {
+        numOfNodesInLastRaw = numOfNodesInLastRaw << 1;
+    }
+    int numOfNodes = numOfNodesInLastRaw * 2 - 1;
+    int tree[numOfNodes];
+    int indexOfFirstSoldier = numOfNodes - numOfNodesInLastRaw;
+    int indexOfLastSoldier = indexOfFirstSoldier + numOfSoldiers - 1;
+    for (int i = indexOfFirstSoldier; i < indexOfLastSoldier + 1; i++) {
+        tree[i] = 1;
+    }
+    for (int i = indexOfLastSoldier + 1; i < numOfNodes; i++) {
+        tree[i] = 0;
+    }
+    for (int i = indexOfFirstSoldier - 1; i >= 0; i--) {
+        tree[i] = tree[i * 2 + 1] + tree[i * 2 + 2];
+    }
+    printf("%d ", shift);
+    int nextPosition = shift;
+    updateTree(tree, nextPosition - 1, numOfNodes);
+    for (int i = 1; i < numOfSoldiers; i++) {
+        nextPosition = (nextPosition + shift - 1) % (numOfSoldiers - i);
+        if (nextPosition == 0) {
+            nextPosition = numOfSoldiers - i;
+        }
+        int nextSoldier = findNext(tree, nextPosition, 0, numOfNodes);
+        nextSoldier=nextSoldier-numOfNodes/2+1;
+        printf("%d ", nextSoldier);
+        updateTree(tree, nextSoldier - 1, numOfNodes);
+    }
+}

@@ -1,0 +1,39 @@
+1726
+Кто ходит в гости
+я записываю х и у в разные массивы, сортирую массивы по возростанию.
+Буду считать расстояние пройденное по оси ох и оу отдельно. 
+Расстояние между любыми соседними координатами на одной оси проходится
+для каждой координаты с одной стороны столько раз сколько координат с другой стороный
+и умножить на два, так мы считаем ходят люди и с одной стороны и с другой,
+значит данное растояние проходится кол-во координат с одной стороны умножить на кол-во координат с другой
+и умножить на два, так мы считаем для каждого отрезка, проведенного между соседними координатами,
+все эти расстояния складываются в одно общее расстояние и делятся на количество людей, умноженное на количество
+людей минус 1, так каждый человек посещает каждого кроме себя самого  
+
+#include <iostream> 
+#include <algorithm>
+using namespace std; 
+
+int main() 
+{ 
+long long numOfPeople; 
+cin >> numOfPeople; 
+long long x[numOfPeople]; 
+long long y[numOfPeople]; 
+for (long long i = 0; i < numOfPeople; i++) { 
+	cin >> x[i]; 
+	cin >> y[i]; 
+	}
+	
+sort(x, x + numOfPeople);
+sort(y, y + numOfPeople);
+
+long long totalDistance=0;
+
+for (long long i=0; i<numOfPeople-1; i++){
+		totalDistance+=(x[i+1]-x[i] + y[i+1]-y[i]) *(i+1) * (numOfPeople-i-1) * 2;
+	}
+long long averageDistance=totalDistance/(numOfPeople*(numOfPeople-1));
+
+    cout << averageDistance << endl;
+}

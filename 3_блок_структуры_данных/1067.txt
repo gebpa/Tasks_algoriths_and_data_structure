@@ -1,0 +1,90 @@
+1067
+Disc Tree	
+
+Для представления директорий используется структура с тремя полями: карта с детьми данной структуры,
+указатель на родителя структуры и имя директории. Для хранения структур используется карта, где ключ
+- это путь до директории от начала, а значение сама директория. Полученная строка обрабатывается с лева на право,
+новая директория в строке начинается после знака \, директории присваивается родитель, если данная директория
+не была первой в строке, после данная директорию вставляется в карту, если данная директория уже есть,
+возвращается адрес уже существующей директории, если ее не было, возвращается ее адрес, директория
+вставляется в карту детей своего родителя. Так обрабатываются все строки.
+После этого в карте ищутся директории без родителя, их имена выводятся, после вызывается рекурсивная функция,
+которая выводит всех потомков данной директорияо.
+ 
+#include <iostream>
+#include <map>
+#include <sstream>
+
+using namespace std;
+
+struct Directory {
+    map<string, Directory*> children;
+    Directory *parent = nullptr;
+    string name;
+};
+
+void printChildrenDirectory(Directory *directory) {
+    for (auto child : directory->children) {
+        cout<<child.second->name<<endl;
+        if (!child.second->children.empty()){printChildrenDirectory(child.second);}
+    }
+}
+
+int main() {
+    int n;
+    cin >> n;
+    map<string, Directory> directories;
+    for (int i = 0; i < n; i++) {
+        string path;
+        cin >> path;
+        string buff{""};
+        string buff1{""};
+        char c = '\\';
+        string space=" ";
+        char sp=' ';
+        int flag = 0;
+        Directory *parent;
+        for (char p:path) {
+            if (p != c) {
+                buff += p;
+                buff1 +=p;}
+            else if (p == c && buff != "") {
+                Directory dir;
+                dir.name=buff1;
+                if (flag == 0) {
+                    flag = 1;
+                    auto result=directories.insert(make_pair(buff, dir));
+                    parent = &result.first->second;
+                } else {
+                    dir.parent = parent;
+                    auto result=directories.insert(make_pair(buff, dir));
+                    parent->children.insert(make_pair(buff, &result.first->second));
+                    parent = &result.first->second;
+                }
+                buff+='\\';
+                buff1=space;
+                space +=sp;
+                }
+        }
+        if (buff != "") {
+            Directory dir;
+            dir.name=buff1;
+            if (flag == 0) {
+                flag = 1;
+                auto result=directories.insert(make_pair(buff, dir));
+                parent = &result.first->second;
+            } else {
+                dir.parent = parent;
+                auto result=directories.insert(make_pair(buff, dir));
+                parent->children.insert(make_pair(buff, &result.first->second));
+            }
+        }
+    }
+    for (auto it = directories.begin(); it != directories.end(); ++it)
+    {
+        if(it->second.parent== nullptr) {
+            cout<<it->second.name<<endl;
+            printChildrenDirectory(&it->second);
+        }
+    }
+}
